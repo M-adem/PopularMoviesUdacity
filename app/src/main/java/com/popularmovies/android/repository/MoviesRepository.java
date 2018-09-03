@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.popularmovies.android.activity.MainActivity;
 import com.popularmovies.android.adapter.MoviesAdapter;
+import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.model.MoviesResponse;
 import com.popularmovies.android.model.OnGetMoviesCallback;
@@ -45,7 +46,7 @@ public class MoviesRepository {
         return repository;
     }
 
-    public void getPopularMovies(int page, final OnGetMoviesCallback callback) {
+    public void getPopularMovies(int page, final GetMoviesCallback callback) {
         api.getPopularMovies(APIKEY, LANGUAGE, page)
                 .enqueue(new Callback<MoviesResponse>() {
                     @Override
@@ -69,7 +70,7 @@ public class MoviesRepository {
                 });
     }
 
-    public void getTopRatedMovies(int page, final OnGetMoviesCallback callback) {
+    public void getTopRatedMovies(int page, final GetMoviesCallback callback) {
         api.getTopRatedMovies(APIKEY, LANGUAGE, page)
                 .enqueue(new Callback<MoviesResponse>() {
                     @Override

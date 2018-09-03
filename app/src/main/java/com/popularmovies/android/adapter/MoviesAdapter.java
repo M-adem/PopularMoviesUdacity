@@ -18,7 +18,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private List<Movie> movies;
     private Context context;
-    private boolean isLoadingAdded = false;
+    private boolean isLoading = false;
     private static final String BASE_URL_IMG = "https://image.tmdb.org/t/p/w342";
 
 
@@ -60,18 +60,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
 
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView releaseDate;
-        TextView title;
-        TextView rating;
-        TextView genres;
+
         ImageView imageUrl;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
-           /* releaseDate = itemView.findViewById(R.id.item_movie_release_date);
-            title = itemView.findViewById(R.id.item_movie_title);
-            rating = itemView.findViewById(R.id.item_movie_rating);
-            genres = itemView.findViewById(R.id.item_movie_genre);*/
             imageUrl = itemView.findViewById(R.id.image_url);
             itemView.setOnClickListener(this);
         }
@@ -93,7 +86,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
     @Override
     public int getItemViewType(int position) {
-        return (position == movies.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == movies.size() - 1 && isLoading) ? LOADING : ITEM;
     }
 
     public void appendMovies(List<Movie> moviesToAppend) {

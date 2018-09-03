@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +16,8 @@ import android.widget.Toast;
 
 import com.popularmovies.android.R;
 import com.popularmovies.android.adapter.MoviesAdapter;
+import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
-import com.popularmovies.android.model.OnGetMoviesCallback;
 import com.popularmovies.android.repository.MoviesRepository;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private RecyclerView moviesList;
     private MoviesAdapter adapter;
 
-    private boolean isFetchingMovies;
+    private boolean isLoadingMovies;
     private int currentPage = 1;
 
     private MoviesRepository moviesRepository;
@@ -44,14 +43,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
 
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
-        setupOnScrollListener();
+        onScrollListenerPage();
         getPopularMovies(currentPage);
     }
 
     public void getPopularMovies(int page){
         progressBar.setVisibility(View.VISIBLE);
-        isFetchingMovies = true;
-        moviesRepository.getPopularMovies(page,new OnGetMoviesCallback() {
+        isLoadingMovies = true;
+        moviesRepository.getPopularMovies(page,new GetMoviesCallback() {
             @Override
             public void onSuccess(int page,List<Movie> movies) {
                 progressBar.setVisibility(View.GONE);
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                     adapter.appendMovies(movies);
                 }
                 currentPage = page;
-                isFetchingMovies = false;
+                isLoadingMovies = false;
 
 
             }
@@ -82,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     public void getTopRatedMovies(int page){
         progressBar.setVisibility(View.VISIBLE);
-        isFetchingMovies = true;
-        moviesRepository.getTopRatedMovies(page,new OnGetMoviesCallback() {
+        isLoadingMovies = true;
+        moviesRepository.getTopRatedMovies(page,new GetMoviesCallback() {
             @Override
             public void onSuccess(int page,List<Movie> movies) {
                 progressBar.setVisibility(View.GONE);
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                     adapter.appendMovies(movies);
                 }
                 currentPage = page;
-                isFetchingMovies = false;
+                isLoadingMovies = false;
 
 
             }
@@ -144,18 +143,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         intentToStartDetailActivity.putExtra("movie_detail_date", movie.getReleaseDate());
         intentToStartDetailActivity.putExtra("movie_detail_rating", movie.getRating());
         intentToStartDetailActivity.putExtra("movie_detail_overview", movie.getOverview());
-
-
-
         startActivity(intentToStartDetailActivity);
-
-
-
 
     }
 
 
-    private void setupOnScrollListener() {
+    private void onScrollListenerPage() {
         moviesList.setHasFixedSize(true);
         final GridLayoutManager manager = new GridLayoutManager(this,2);
         moviesList.setLayoutManager(manager);
@@ -167,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 int firstVisibleItem = manager.findFirstVisibleItemPosition();
 
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                    if (!isFetchingMovies) {
+                    if (!isLoadingMovies) {
                         getPopularMovies(currentPage + 1);
                     }
                 }
