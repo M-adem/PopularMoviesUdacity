@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_medium">20</dimen>
+    <dimen name="movie_item_offset">20</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>

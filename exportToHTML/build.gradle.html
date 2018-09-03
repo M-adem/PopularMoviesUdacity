@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>build.gradle</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(169,183,198); }
+.s1 { color: rgb(106,135,89); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+build.gradle</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">apply plugin: </span><span class="s1">'com.android.application'</span><span class="s0"> 
+ 
+android { 
+    compileSdkVersion </span><span class="s2">27</span><span class="s0"> 
+    defaultConfig { 
+        applicationId </span><span class="s1">&quot;com.popularmovies.android&quot;</span><span class="s0"> 
+        minSdkVersion </span><span class="s2">16</span><span class="s0"> 
+        targetSdkVersion </span><span class="s2">27</span><span class="s0"> 
+        versionCode </span><span class="s2">1</span><span class="s0"> 
+        versionName </span><span class="s1">&quot;1.0&quot;</span><span class="s0"> 
+        testInstrumentationRunner </span><span class="s1">&quot;android.support.test.runner.AndroidJUnitRunner&quot;</span><span class="s0"> 
+    } 
+    buildTypes { 
+        release { 
+            minifyEnabled </span><span class="s3">false</span><span class="s0"> 
+            proguardFiles getDefaultProguardFile(</span><span class="s1">'proguard-android.txt'</span><span class="s0">), </span><span class="s1">'proguard-rules.pro'</span><span class="s0"> 
+        } 
+    } 
+  
+} 
+ 
+dependencies { 
+    implementation fileTree(dir: </span><span class="s1">'libs'</span><span class="s0">, include: [</span><span class="s1">'*.jar'</span><span class="s0">]) 
+    </span><span class="s4">//noinspection GradleCompatible</span><span class="s0"> 
+    implementation </span><span class="s1">'com.android.support:appcompat-v7:27.1.1'</span><span class="s0"> 
+    implementation </span><span class="s1">'com.android.support.constraint:constraint-layout:1.1.2'</span><span class="s0"> 
+    testImplementation </span><span class="s1">'junit:junit:4.12'</span><span class="s0"> 
+    androidTestImplementation </span><span class="s1">'com.android.support.test:runner:1.0.2'</span><span class="s0"> 
+    androidTestImplementation </span><span class="s1">'com.android.support.test.espresso:espresso-core:3.0.2'</span><span class="s0"> 
+ 
+ 
+    implementation </span><span class="s1">'com.android.support:design:27.1.1'</span><span class="s0"> 
+    implementation </span><span class="s1">'com.android.support:recyclerview-v7:27.1.1'</span><span class="s0"> 
+ 
+    implementation </span><span class="s1">'com.squareup.retrofit2:retrofit:2.3.0'</span><span class="s0"> 
+    implementation </span><span class="s1">'com.squareup.retrofit2:converter-gson:2.3.0'</span><span class="s0"> 
+    implementation </span><span class="s1">'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'</span><span class="s0"> 
+ 
+ 
+} 
+</span></pre>
+</body>
+</html>
