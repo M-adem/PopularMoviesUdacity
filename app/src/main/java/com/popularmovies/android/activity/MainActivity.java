@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 getPopularMovies(currentPage);
                 return true;
             case R.id.sort_by_rating:
+                popularMovies=false;
                 topRatedMovies=true;
                 getTopRatedMovies(currentPage);
                 return true;

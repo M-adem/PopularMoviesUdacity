@@ -1,18 +1,10 @@
 package com.popularmovies.android.repository;
 
 import android.support.annotation.NonNull;
-import android.view.View;
-
-import com.popularmovies.android.activity.MainActivity;
-import com.popularmovies.android.adapter.MoviesAdapter;
 import com.popularmovies.android.model.GetMoviesCallback;
-import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.model.MoviesResponse;
-import com.popularmovies.android.model.OnGetMoviesCallback;
-import com.popularmovies.android.utils.TMDbApi;
+import com.popularmovies.android.utils.ApiMovie;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,9 +19,9 @@ public class MoviesRepository {
     private static final String APIKEY = "<key>";
     private static MoviesRepository repository;
 
-    private TMDbApi api;
+    private ApiMovie api;
 
-    private MoviesRepository(TMDbApi api) {
+    private MoviesRepository(ApiMovie api) {
         this.api = api;
     }
 
@@ -40,7 +32,7 @@ public class MoviesRepository {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            repository = new MoviesRepository(retrofit.create(TMDbApi.class));
+            repository = new MoviesRepository(retrofit.create(ApiMovie.class));
         }
 
         return repository;
