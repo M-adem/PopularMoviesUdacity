@@ -21,8 +21,6 @@ public class MoviesRepository {
 
     private ApiMovie api;
 
-    
-
     private MoviesRepository(ApiMovie api) {
         this.api = api;
     }
