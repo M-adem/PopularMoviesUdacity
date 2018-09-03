@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private boolean isLoadingMovies;
     private int currentPage = 1;
 
+
+    private boolean popularMovies=true;
+    private boolean topRatedMovies=false;
+
     private MoviesRepository moviesRepository;
     ProgressBar progressBar;
     @Override
@@ -120,11 +124,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         adapter=null;
         switch (item.getItemId()) {
             case R.id.sort_by_popularity:
-
+                popularMovies=true;
+                topRatedMovies=false;
                 getPopularMovies(currentPage);
                 return true;
             case R.id.sort_by_rating:
-
+                topRatedMovies=true;
                 getTopRatedMovies(currentPage);
                 return true;
             default:
@@ -161,7 +166,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     if (!isLoadingMovies) {
-                        getPopularMovies(currentPage + 1);
+                        if(popularMovies){
+                            getPopularMovies(currentPage + 1);
+                        }
+                        if(topRatedMovies){
+                            getTopRatedMovies(currentPage + 1);
+                        }
                     }
                 }
             }
