@@ -1,11 +1,14 @@
 package com.popularmovies.android.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Movie {
+public class Movie implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -34,6 +37,32 @@ public class Movie {
     @SerializedName("overview")
     @Expose
     private String overview;
+
+    @SerializedName("runtime")
+    @Expose
+    private int runtime;
+
+    protected Movie(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        posterPath = in.readString();
+        releaseDate = in.readString();
+        rating = in.readFloat();
+        overview = in.readString();
+        runtime = in.readInt();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -89,5 +118,31 @@ public class Movie {
 
     public void setOverview(String overview) {
         this.overview = overview;
+    }
+
+    public int getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeString(posterPath);
+        parcel.writeString(releaseDate);
+        parcel.writeFloat(rating);
+        parcel.writeString(overview);
+        parcel.writeInt(runtime);
+
+
     }
 }

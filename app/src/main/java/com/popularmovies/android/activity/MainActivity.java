@@ -51,24 +51,22 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         getPopularMovies(currentPage);
     }
 
-    public void getPopularMovies(int page){
+    public void getPopularMovies(int page) {
         progressBar.setVisibility(View.VISIBLE);
         isLoadingMovies = true;
-        moviesRepository.getPopularMovies(page,new GetMoviesCallback() {
-            @Override
-            public void onSuccess(int page,List<Movie> movies) {
-                progressBar.setVisibility(View.GONE);
+        moviesRepository.getPopularMovies(page, new GetMoviesCallback() {
 
+            @Override
+            public void onSuccess(Object... params  ) {
+                progressBar.setVisibility(View.GONE);
                 if (adapter == null) {
-                    adapter = new MoviesAdapter(MainActivity.this,movies, MainActivity.this);
+                    adapter = new MoviesAdapter(MainActivity.this, (List<Movie>) params[1], MainActivity.this);
                     moviesList.setAdapter(adapter);
                 } else {
-                    adapter.appendMovies(movies);
+                    adapter.appendMovies((List<Movie>) params[1]);
                 }
-                currentPage = page;
+                currentPage = (int) params[0];
                 isLoadingMovies = false;
-
-
             }
 
 
@@ -80,29 +78,24 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 Toast.makeText(MainActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    public void getTopRatedMovies(int page){
+    public void getTopRatedMovies(int page) {
         progressBar.setVisibility(View.VISIBLE);
         isLoadingMovies = true;
-        moviesRepository.getTopRatedMovies(page,new GetMoviesCallback() {
+        moviesRepository.getTopRatedMovies(page, new GetMoviesCallback() {
             @Override
-            public void onSuccess(int page,List<Movie> movies) {
+            public void onSuccess(Object... params  ) {
                 progressBar.setVisibility(View.GONE);
                 if (adapter == null) {
-                    adapter = new MoviesAdapter(MainActivity.this,movies, MainActivity.this);
+                    adapter = new MoviesAdapter(MainActivity.this, (List<Movie>) params[1], MainActivity.this);
                     moviesList.setAdapter(adapter);
                 } else {
-                    adapter.appendMovies(movies);
+                    adapter.appendMovies((List<Movie>) params[1]);
                 }
-                currentPage = page;
+                currentPage = (int) params[0];
                 isLoadingMovies = false;
-
-
             }
-
-
 
             @Override
             public void onError() {

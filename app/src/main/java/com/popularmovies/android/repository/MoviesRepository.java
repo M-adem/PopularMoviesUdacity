@@ -1,8 +1,13 @@
 package com.popularmovies.android.repository;
 
 import android.support.annotation.NonNull;
+
+import com.popularmovies.android.model.DetailMovie;
 import com.popularmovies.android.model.GetMoviesCallback;
+import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.model.MoviesResponse;
+import com.popularmovies.android.model.ReviewsResponse;
+import com.popularmovies.android.model.TrailerResponse;
 import com.popularmovies.android.utils.ApiMovie;
 
 
@@ -11,12 +16,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
+import com.popularmovies.android.utils.Constant;
 public class MoviesRepository {
 
-    private static final String BASE_URL = "https://api.themoviedb.org/3/";
-    private static final String LANGUAGE = "en-US";
-    private static final String APIKEY = "<key>";
+
     private static MoviesRepository repository;
 
     private ApiMovie api;
@@ -28,7 +31,7 @@ public class MoviesRepository {
     public static MoviesRepository getInstance() {
         if (repository == null) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(Constant.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
@@ -39,7 +42,7 @@ public class MoviesRepository {
     }
 
     public void getPopularMovies(int page, final GetMoviesCallback callback) {
-        api.getPopularMovies(APIKEY, LANGUAGE, page)
+        api.getPopularMovies(Constant.APIKEY, Constant.LANGUAGE, page)
                 .enqueue(new Callback<MoviesResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
@@ -63,7 +66,7 @@ public class MoviesRepository {
     }
 
     public void getTopRatedMovies(int page, final GetMoviesCallback callback) {
-        api.getTopRatedMovies(APIKEY, LANGUAGE, page)
+        api.getTopRatedMovies(Constant.APIKEY, Constant.LANGUAGE, page)
                 .enqueue(new Callback<MoviesResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
@@ -86,5 +89,82 @@ public class MoviesRepository {
                 });
     }
 
+    public void getDetailMovie(int movieId, final GetMoviesCallback callback) {
+        api.getMovieById(movieId,Constant.APIKEY, Constant.LANGUAGE)
+                .enqueue(new Callback<DetailMovie>() {
+                    @Override
+                    public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
 
+                        if (response.isSuccessful()) {
+                            DetailMovie movieDetail = response.body();
+                            if (movieDetail != null  ) {
+                                callback.onSuccess(movieDetail.getId(), movieDetail);
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DetailMovie> call, Throwable t) {
+                        callback.onError();
+                    }
+
+                });
+    }
+
+
+    public void getTrailerMovie(final int movieId, final GetMoviesCallback callback) {
+        api.getTrailer(movieId,Constant.APIKEY, Constant.LANGUAGE)
+                .enqueue(new Callback<TrailerResponse>() {
+                    @Override
+                    public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
+
+                        if (response.isSuccessful()) {
+                            TrailerResponse trailerResponse = response.body();
+                            if (trailerResponse != null  ) {
+                                callback.onSuccess(movieId,trailerResponse.getTrailers());
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TrailerResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+
+                });
+    }
+
+    public void getReviewsMovie(final int movieId,final int page, final GetMoviesCallback callback) {
+        api.getReviews(movieId,page,Constant.APIKEY, Constant.LANGUAGE)
+                .enqueue(new Callback<ReviewsResponse>() {
+                    @Override
+                    public void onResponse(Call<ReviewsResponse> call, Response<ReviewsResponse> response) {
+
+                        if (response.isSuccessful()) {
+                            ReviewsResponse reviewsResponse = response.body();
+                            if (reviewsResponse != null  ) {
+                                callback.onSuccess(movieId,page,reviewsResponse.getReviews());
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReviewsResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+
+                });
+    }
 }

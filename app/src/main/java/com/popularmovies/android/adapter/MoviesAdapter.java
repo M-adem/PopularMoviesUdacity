@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.popularmovies.android.R;
 import com.popularmovies.android.model.Movie;
+import com.popularmovies.android.utils.Constant;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private List<Movie> movies;
     private Context context;
     private boolean isLoading = false;
-    private static final String BASE_URL_IMG = "https://image.tmdb.org/t/p/w342";
+
 
 
     private static final int ITEM = 0;
@@ -29,7 +30,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private final MoviesAdapterOnClickHandler mClickHandler ;
 
-     
+
     public interface MoviesAdapterOnClickHandler {
         void onClick(Movie movie);
     }
@@ -76,7 +77,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
         public void bind(Movie movie) {
 
-            Picasso.with(context).load(BASE_URL_IMG + movie.getPosterPath()).placeholder(R.drawable.movie_placeholder).error(R.drawable.erreur_images).into(imageUrl);
+            Picasso.with(context).load(Constant.BASE_URL_IMG + movie.getPosterPath()).placeholder(R.drawable.movie_placeholder).error(R.drawable.erreur_images).into(imageUrl);
         }
     }
 

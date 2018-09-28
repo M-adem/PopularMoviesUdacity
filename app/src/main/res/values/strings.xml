@@ -12,6 +12,7 @@
 
     <string name="sort_by_popularity">Popular</string>
     <string name="sort_by_rating">Rating</string>
+    <string name="sort_by_favorite">Favorite</string>
 
     <string name="title_activity_home">Home Activity</string>
     <string name="title_activity_movies_details">MoviesDetailsActivity</string>
@@ -32,5 +33,9 @@
     <!-- Movie detail -->
     <string name="trailers_header">Trailers:</string>
     <string name="reviews_header">Reviews:</string>
+    <string name="action_favorite">Make as \nFavorite</string>
+    <string name="content_authority">com.popularmovies.android</string>
+    <string name="unfavorite">unfavorite</string>
+
 
 </resources>
