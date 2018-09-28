@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -60,8 +62,8 @@ public class DetailActivity extends AppCompatActivity {
     private ListView listViewTrailer;
     private RecyclerView listViewReview;
     private boolean isLoadingReview;
-    private int currentPage=1;
-    private boolean isFavorite =false;
+    private int currentPage = 1;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +83,15 @@ public class DetailActivity extends AppCompatActivity {
             public void onSuccess(final Object... params) {
                 isLoadingReview = false;
                 reviews = (List<Review>) params[2];
-                if (reviews != null && reviews.size()!=0) {
-                    if(reviewsListAdapter==null){
+                if (reviews != null && reviews.size() != 0) {
+                    if (reviewsListAdapter == null) {
                         reviewsListAdapter = new ReviewsListAdapter(context, reviews);
 
                         listViewReview = (RecyclerView) findViewById(R.id.review_list);
                         listViewReview.setAdapter(reviewsListAdapter);
                         //MovieUtile.setListViewHeightBasedOnItems(listViewReview);
                         onScrollListenerPage(id, context);
-                    }else{
+                    } else {
 
                         reviewsListAdapter.appendReview((List<Review>) params[2]);
                     }
@@ -99,8 +101,8 @@ public class DetailActivity extends AppCompatActivity {
                     reviewText.setVisibility(View.GONE);
                     reviewText.setVisibility(View.INVISIBLE);
                     if (listViewReview != null) {
-                       // listViewReview.setVisibility(View.GONE);
-                       // listViewReview.setVisibility(View.INVISIBLE);
+                        // listViewReview.setVisibility(View.GONE);
+                        // listViewReview.setVisibility(View.INVISIBLE);
                     }
 
 
@@ -196,29 +198,31 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!isFavorite){
-                    Toast.makeText(DetailActivity.this, "Click.", Toast.LENGTH_SHORT).show();
+                if (!isFavorite) {
 
                     movieMakeAsFavorite.setText(R.string.unfavorite);
                     // insert
                     ContentValues movieValues = new ContentValues();
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,movie.getId());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE,movie.getTitle());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW,movie.getTitle());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getTitle());
 
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH,movie.getPosterPath());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RATING,movie.getRating());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME,movie.getRuntime());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,movie.getReleaseDate());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_RATING, movie.getRating());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
 
                     context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,movieValues);
 
-
-                    isFavorite=true;
-                }else{
+                    isFavorite = true;
+                } else {
                     movieMakeAsFavorite.setText(R.string.action_favorite);
-                    isFavorite=false;
-                    //remouve
+                    isFavorite = false;
+
+                    String[] projection = new String[]{
+                            String.valueOf(movie.getId())
+                    };
+                    context.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,MovieContract.MovieEntry.COLUMN_MOVIE_ID +"=?", projection);
 
                 }
 
@@ -239,7 +243,22 @@ public class DetailActivity extends AppCompatActivity {
                 getTrailerMovies(movie.getId(), this);
                 //reviews
                 getReviewsMovies(movie.getId(), 1, this);
+                // test if favorite
+                String[] projection = new String[]{
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID
+                };
+                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = '" + movie.getId() + "'";
 
+                Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,projection, selection, null, null);
+
+                if ((cursor != null) && (cursor.moveToFirst())) {
+                    isFavorite=true;
+                    movieMakeAsFavorite.setText(R.string.unfavorite);
+                    cursor.close();
+                }else{
+                    movieMakeAsFavorite.setText(R.string.action_favorite);
+                    isFavorite=false;
+                }
             }
         }
     }
@@ -258,7 +277,7 @@ public class DetailActivity extends AppCompatActivity {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
                     if (!isLoadingReview) {
                         currentPage++;
-                         getReviewsMovies(id, currentPage,activity);
+                        getReviewsMovies(id, currentPage, activity);
 
                     }
                 }

@@ -34,11 +34,11 @@ public class MovieContract {
         public static final String COLUMN_RUNTIME = "runtime";
 
 
-        public static Uri buildMovieUriWithDate(long date) {
+       /* public static Uri buildMovieUriWithDate(long date) {
             return CONTENT_URI.buildUpon()
                     .appendPath(Long.toString(date))
                     .build();
-        }
+        }*/
 
 
         public static String getSqlSelectMovie() {
