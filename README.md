@@ -1,5 +1,7 @@
 # PopularMoviesUdacity
 
-update key API 
-file class MoviesRepository 
-String APIKEY = "<key>";
+update key API
+
+File gradle.properties
+
+ApiKey_Movie="<Key>"
