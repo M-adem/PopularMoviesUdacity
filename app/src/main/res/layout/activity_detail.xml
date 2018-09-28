@@ -79,12 +79,15 @@
 
         <TextView
             android:id="@+id/movie_make_as_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:padding="5dp"
             android:layout_marginTop="8dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
+            android:textStyle="bold"
+            android:background="#00B6A0"
             android:textSize="14sp"
             android:text="@string/action_favorite"
             android:layout_below="@id/movie_detail_rating"

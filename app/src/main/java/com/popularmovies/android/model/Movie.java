@@ -42,6 +42,7 @@ public class Movie implements Parcelable {
     @Expose
     private int runtime;
 
+    public Movie() {}
     protected Movie(Parcel in) {
         id = in.readInt();
         title = in.readString();

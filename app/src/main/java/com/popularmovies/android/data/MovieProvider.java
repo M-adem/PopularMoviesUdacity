@@ -11,6 +11,11 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.popularmovies.android.model.Movie;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MovieProvider extends ContentProvider {
 
     public static final int CODE_MOVIE = 100;
@@ -79,6 +84,7 @@ public class MovieProvider extends ContentProvider {
                 return super.bulkInsert(uri, values);
         }
     }
+
 
 
     @Override

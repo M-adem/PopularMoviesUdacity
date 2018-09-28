@@ -35,7 +35,7 @@
     <string name="reviews_header">Reviews:</string>
     <string name="action_favorite">Make as \nFavorite</string>
     <string name="content_authority">com.popularmovies.android</string>
-    <string name="unfavorite">unfavorite</string>
+    <string name="unfavorite">Remove from favorite</string>
 
 
 </resources>

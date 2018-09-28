@@ -205,8 +205,7 @@ public class DetailActivity extends AppCompatActivity {
                     ContentValues movieValues = new ContentValues();
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
                     movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getTitle());
-
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
                     movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
                     movieValues.put(MovieContract.MovieEntry.COLUMN_RATING, movie.getRating());
                     movieValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
@@ -247,7 +246,7 @@ public class DetailActivity extends AppCompatActivity {
                 String[] projection = new String[]{
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID
                 };
-                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = '" + movie.getId() + "'";
+                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = " + movie.getId() ;
 
                 Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,projection, selection, null, null);
 
