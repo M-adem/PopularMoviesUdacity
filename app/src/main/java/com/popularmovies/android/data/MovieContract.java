@@ -3,8 +3,6 @@ package com.popularmovies.android.data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.popularmovies.android.model.Movie;
-
 public class MovieContract {
 
     public static final String CONTENT_AUTHORITY = "com.popularmovies.android";
@@ -42,7 +40,7 @@ public class MovieContract {
 
 
         public static String getSqlSelectMovie() {
-            return MovieEntry.COLUMN_MOVIE_ID ;
+            return MovieEntry.COLUMN_MOVIE_ID;
         }
     }
 }

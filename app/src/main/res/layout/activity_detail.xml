@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".activity.DetailActivity"
         android:paddingBottom="16dp"
-        >
+        tools:context=".activity.DetailActivity">
+
         <TextView
             android:id="@+id/movie_detail_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="#00B6A0"
             android:padding="16dp"
             android:textSize="29sp"
-            android:background="#00B6A0"
-            tools:text="Title Movie"
-            android:layout_alignParentTop="true"/>
+            tools:text="Title Movie" />
 
         <ImageView
             android:id="@+id/movie_detail_image"
@@ -34,20 +32,18 @@
             android:scaleType="centerInside" />
 
 
-
         <TextView
             android:id="@+id/movie_detail_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/movie_detail_title"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            tools:text="1990-11-25"
+            android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/movie_detail_image"
-            android:layout_below="@id/movie_detail_title"
-            />
+            android:textSize="20sp"
+            tools:text="1990-11-25" />
 
         <TextView
             android:id="@+id/movie_detail_runtime"
@@ -81,77 +77,79 @@
             android:id="@+id/movie_make_as_favorite"
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:padding="5dp"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/movie_detail_rating"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/movie_detail_image"
             android:background="#00B6A0"
-            android:textSize="14sp"
+            android:padding="5dp"
             android:text="@string/action_favorite"
-            android:layout_below="@id/movie_detail_rating"
-            android:layout_toRightOf="@id/movie_detail_image"/>
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/movie_detail_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/movie_detail_image"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:textSize="14sp"
-            tools:text="'."
-            android:layout_below="@id/movie_detail_image"/>
+            tools:text="'." />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorGray"
-            android:layout_below="@id/movie_detail_overview"/>
+            android:layout_below="@id/movie_detail_overview"
+            android:background="@color/colorGray" />
+
         <TextView
             android:id="@+id/trailers_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_below="@id/movie_detail_overview"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:textSize="14sp"
+            android:layout_marginTop="16dp"
             android:text="@string/trailers_header"
-            android:layout_below="@id/movie_detail_overview" />
+            android:textSize="14sp" />
+
         <ListView
             android:id="@+id/trailer_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/trailers_header"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_below="@id/trailers_header">
-        </ListView>
+            android:layout_marginTop="8dp"></ListView>
 
         <TextView
             android:id="@+id/review_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_below="@id/trailer_list"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:textSize="14sp"
+            android:layout_marginTop="16dp"
             android:text="@string/reviews_header"
-            android:layout_below="@id/trailer_list" />
+            android:textSize="14sp" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/review_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/review_header"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_below="@id/review_header">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_marginTop="8dp"></android.support.v7.widget.RecyclerView>
     </RelativeLayout>
 
 

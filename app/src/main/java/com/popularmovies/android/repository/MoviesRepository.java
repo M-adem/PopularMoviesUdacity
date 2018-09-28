@@ -4,19 +4,18 @@ import android.support.annotation.NonNull;
 
 import com.popularmovies.android.model.DetailMovie;
 import com.popularmovies.android.model.GetMoviesCallback;
-import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.model.MoviesResponse;
 import com.popularmovies.android.model.ReviewsResponse;
 import com.popularmovies.android.model.TrailerResponse;
 import com.popularmovies.android.utils.ApiMovie;
-
+import com.popularmovies.android.utils.Constant;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import com.popularmovies.android.utils.Constant;
+
 public class MoviesRepository {
 
 
@@ -90,14 +89,14 @@ public class MoviesRepository {
     }
 
     public void getDetailMovie(int movieId, final GetMoviesCallback callback) {
-        api.getMovieById(movieId,Constant.APIKEY, Constant.LANGUAGE)
+        api.getMovieById(movieId, Constant.APIKEY, Constant.LANGUAGE)
                 .enqueue(new Callback<DetailMovie>() {
                     @Override
                     public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
 
                         if (response.isSuccessful()) {
                             DetailMovie movieDetail = response.body();
-                            if (movieDetail != null  ) {
+                            if (movieDetail != null) {
                                 callback.onSuccess(movieDetail.getId(), movieDetail);
                             } else {
                                 callback.onError();
@@ -117,15 +116,15 @@ public class MoviesRepository {
 
 
     public void getTrailerMovie(final int movieId, final GetMoviesCallback callback) {
-        api.getTrailer(movieId,Constant.APIKEY, Constant.LANGUAGE)
+        api.getTrailer(movieId, Constant.APIKEY, Constant.LANGUAGE)
                 .enqueue(new Callback<TrailerResponse>() {
                     @Override
                     public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
 
                         if (response.isSuccessful()) {
                             TrailerResponse trailerResponse = response.body();
-                            if (trailerResponse != null  ) {
-                                callback.onSuccess(movieId,trailerResponse.getTrailers());
+                            if (trailerResponse != null) {
+                                callback.onSuccess(movieId, trailerResponse.getTrailers());
                             } else {
                                 callback.onError();
                             }
@@ -142,16 +141,16 @@ public class MoviesRepository {
                 });
     }
 
-    public void getReviewsMovie(final int movieId,final int page, final GetMoviesCallback callback) {
-        api.getReviews(movieId,page,Constant.APIKEY, Constant.LANGUAGE)
+    public void getReviewsMovie(final int movieId, final int page, final GetMoviesCallback callback) {
+        api.getReviews(movieId, page, Constant.APIKEY, Constant.LANGUAGE)
                 .enqueue(new Callback<ReviewsResponse>() {
                     @Override
                     public void onResponse(Call<ReviewsResponse> call, Response<ReviewsResponse> response) {
 
                         if (response.isSuccessful()) {
                             ReviewsResponse reviewsResponse = response.body();
-                            if (reviewsResponse != null  ) {
-                                callback.onSuccess(movieId,page,reviewsResponse.getReviews());
+                            if (reviewsResponse != null) {
+                                callback.onSuccess(movieId, page, reviewsResponse.getReviews());
                             } else {
                                 callback.onError();
                             }

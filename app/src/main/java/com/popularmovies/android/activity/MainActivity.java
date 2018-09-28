@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -16,13 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.popularmovies.android.R;
 import com.popularmovies.android.adapter.MoviesAdapter;
 import com.popularmovies.android.data.MovieContract;
-import com.popularmovies.android.data.MovieDbHelper;
-import com.popularmovies.android.data.MovieProvider;
 import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.repository.MoviesRepository;
@@ -31,18 +27,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
+    ProgressBar progressBar;
     private RecyclerView moviesList;
     private MoviesAdapter adapter;
     private TextView emptyView;
     private boolean isLoadingMovies;
     private int currentPage = 1;
-
-
     private boolean popularMovies = true;
     private boolean topRatedMovies = false;
     private boolean favoriteMovies = false;
     private MoviesRepository moviesRepository;
-    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

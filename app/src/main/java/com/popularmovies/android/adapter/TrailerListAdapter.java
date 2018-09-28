@@ -18,7 +18,7 @@ public class TrailerListAdapter extends ArrayAdapter<Trailer> {
     private List<Trailer> trailers;
 
     public TrailerListAdapter(Activity context, List<Trailer> trailers) {
-        super(context, R.layout.listview_trailer_item,trailers);
+        super(context, R.layout.listview_trailer_item, trailers);
         this.context = context;
 
         this.trailers = trailers;
@@ -36,7 +36,6 @@ public class TrailerListAdapter extends ArrayAdapter<Trailer> {
         return rowView;
 
     }
-
 
 
 }

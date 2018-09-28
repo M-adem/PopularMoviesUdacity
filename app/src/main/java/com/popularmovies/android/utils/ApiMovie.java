@@ -1,7 +1,6 @@
 package com.popularmovies.android.utils;
 
 import com.popularmovies.android.model.DetailMovie;
-import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.model.MoviesResponse;
 import com.popularmovies.android.model.ReviewsResponse;
 import com.popularmovies.android.model.TrailerResponse;
@@ -25,6 +24,7 @@ public interface ApiMovie {
             @Query("language") String language,
             @Query("page") int page
     );
+
     @GET("movie/{movie_id}")
     Call<DetailMovie> getMovieById(
             @Path("movie_id") int movieId,

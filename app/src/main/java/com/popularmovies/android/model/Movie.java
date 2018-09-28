@@ -10,49 +10,6 @@ import java.util.List;
 
 public class Movie implements Parcelable {
 
-    @SerializedName("id")
-    @Expose
-    private int id;
-
-    @SerializedName("title")
-    @Expose
-    private String title;
-
-    @SerializedName("poster_path")
-    @Expose
-    private String posterPath;
-
-    @SerializedName("release_date")
-    @Expose
-    private String releaseDate;
-
-    @SerializedName("vote_average")
-    @Expose
-    private float rating;
-
-    @SerializedName("genre_ids")
-    @Expose
-    private List<Integer> genreIds;
-
-    @SerializedName("overview")
-    @Expose
-    private String overview;
-
-    @SerializedName("runtime")
-    @Expose
-    private int runtime;
-
-    public Movie() {}
-    protected Movie(Parcel in) {
-        id = in.readInt();
-        title = in.readString();
-        posterPath = in.readString();
-        releaseDate = in.readString();
-        rating = in.readFloat();
-        overview = in.readString();
-        runtime = in.readInt();
-    }
-
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel in) {
@@ -64,6 +21,43 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    @SerializedName("id")
+    @Expose
+    private int id;
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @SerializedName("poster_path")
+    @Expose
+    private String posterPath;
+    @SerializedName("release_date")
+    @Expose
+    private String releaseDate;
+    @SerializedName("vote_average")
+    @Expose
+    private float rating;
+    @SerializedName("genre_ids")
+    @Expose
+    private List<Integer> genreIds;
+    @SerializedName("overview")
+    @Expose
+    private String overview;
+    @SerializedName("runtime")
+    @Expose
+    private int runtime;
+
+    public Movie() {
+    }
+
+    protected Movie(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        posterPath = in.readString();
+        releaseDate = in.readString();
+        rating = in.readFloat();
+        overview = in.readString();
+        runtime = in.readInt();
+    }
 
     public int getId() {
         return id;

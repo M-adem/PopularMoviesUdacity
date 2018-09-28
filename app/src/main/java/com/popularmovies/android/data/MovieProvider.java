@@ -11,11 +11,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.popularmovies.android.model.Movie;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class MovieProvider extends ContentProvider {
 
     public static final int CODE_MOVIE = 100;
@@ -86,7 +81,6 @@ public class MovieProvider extends ContentProvider {
     }
 
 
-
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
@@ -101,19 +95,19 @@ public class MovieProvider extends ContentProvider {
 
         //switch (match) {
 
-          //  case TASKS:
-                retCursor =  db.query(MovieContract.MovieEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
-           //     break;
-            // Default exception
+        //  case TASKS:
+        retCursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+        //     break;
+        // Default exception
         //    default:
-         //       throw new UnsupportedOperationException("Unknown uri: " + uri);
-      //  }
+        //       throw new UnsupportedOperationException("Unknown uri: " + uri);
+        //  }
 
 
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -135,12 +129,12 @@ public class MovieProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         Uri returnUri;
-                long id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
-                if ( id > 0 ) {
-                    returnUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, id);
-                } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
-                }
+        long id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+        if (id > 0) {
+            returnUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, id);
+        } else {
+            throw new android.database.SQLException("Failed to insert row into " + uri);
+        }
         getContext().getContentResolver().notifyChange(uri, null);
 
         return returnUri;
@@ -155,10 +149,10 @@ public class MovieProvider extends ContentProvider {
 
         if (null == selection) selection = "1";
 
-                numRowsDeleted = mOpenHelper.getWritableDatabase().delete(
-                        MovieContract.MovieEntry.TABLE_NAME,
-                        selection,
-                        selectionArgs);
+        numRowsDeleted = mOpenHelper.getWritableDatabase().delete(
+                MovieContract.MovieEntry.TABLE_NAME,
+                selection,
+                selectionArgs);
 
         return numRowsDeleted;
     }

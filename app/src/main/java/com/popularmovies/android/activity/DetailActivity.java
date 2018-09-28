@@ -5,26 +5,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.popularmovies.android.R;
-import com.popularmovies.android.adapter.MoviesAdapter;
 import com.popularmovies.android.adapter.ReviewsListAdapter;
 import com.popularmovies.android.adapter.TrailerListAdapter;
 import com.popularmovies.android.data.MovieContract;
@@ -32,17 +24,13 @@ import com.popularmovies.android.model.DetailMovie;
 import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.model.Review;
-import com.popularmovies.android.model.ReviewsResponse;
 import com.popularmovies.android.model.Trailer;
-import com.popularmovies.android.model.TrailerResponse;
 import com.popularmovies.android.repository.MoviesRepository;
+import com.popularmovies.android.utils.Constant;
 import com.popularmovies.android.utils.MovieUtile;
 import com.squareup.picasso.Picasso;
-import com.popularmovies.android.utils.Constant;
 
 import java.util.List;
-
-import static com.popularmovies.android.R.layout.listview_trailer_item;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -211,7 +199,7 @@ public class DetailActivity extends AppCompatActivity {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
                     movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
 
-                    context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,movieValues);
+                    context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
 
                     isFavorite = true;
                 } else {
@@ -221,7 +209,7 @@ public class DetailActivity extends AppCompatActivity {
                     String[] projection = new String[]{
                             String.valueOf(movie.getId())
                     };
-                    context.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,MovieContract.MovieEntry.COLUMN_MOVIE_ID +"=?", projection);
+                    context.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?", projection);
 
                 }
 
@@ -246,17 +234,17 @@ public class DetailActivity extends AppCompatActivity {
                 String[] projection = new String[]{
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID
                 };
-                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = " + movie.getId() ;
+                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = " + movie.getId();
 
-                Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,projection, selection, null, null);
+                Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, selection, null, null);
 
                 if ((cursor != null) && (cursor.moveToFirst())) {
-                    isFavorite=true;
+                    isFavorite = true;
                     movieMakeAsFavorite.setText(R.string.unfavorite);
                     cursor.close();
-                }else{
+                } else {
                     movieMakeAsFavorite.setText(R.string.action_favorite);
-                    isFavorite=false;
+                    isFavorite = false;
                 }
             }
         }

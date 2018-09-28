@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-public final class  MovieUtile {
+public final class MovieUtile {
     public static void setListViewHeightBasedOnItems(ListView listView) {
 
         ListAdapter listAdapter = listView.getAdapter();
@@ -31,7 +31,8 @@ public final class  MovieUtile {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
-    public static void watchYoutubeVideo(Context context, String id){
+
+    public static void watchYoutubeVideo(Context context, String id) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse(Constant.YOUTUBE_URL + id));
@@ -42,9 +43,9 @@ public final class  MovieUtile {
         }
     }
 
-    public static void playTrailer(Context context, String id, String site){
-        if(site.equals(Constant.YOUTUBE_LABEL)){
-            watchYoutubeVideo(context,id);
+    public static void playTrailer(Context context, String id, String site) {
+        if (site.equals(Constant.YOUTUBE_LABEL)) {
+            watchYoutubeVideo(context, id);
         }
     }
 }

@@ -8,6 +8,6 @@ public final class Constant {
     public static final String APIKEY = BuildConfig.ApiKey;
 
     public static final String BASE_URL_IMG = "https://image.tmdb.org/t/p/w342";
-    public static final String YOUTUBE_URL ="http://www.youtube.com/watch?v=";
-    public static final String YOUTUBE_LABEL ="YouTube";
+    public static final String YOUTUBE_URL = "http://www.youtube.com/watch?v=";
+    public static final String YOUTUBE_LABEL = "YouTube";
 }

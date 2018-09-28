@@ -23,6 +23,7 @@ public class TrailerResponse {
     public void setTrailer(List<Trailer> trailers) {
         this.trailers = trailers;
     }
+
     public int getId() {
         return id;
     }

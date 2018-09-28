@@ -9,22 +9,20 @@ import android.widget.TextView;
 
 import com.popularmovies.android.R;
 import com.popularmovies.android.model.Review;
+
 import java.util.List;
 
 public class ReviewsListAdapter extends RecyclerView.Adapter<ReviewsListAdapter.ReviewViewHolder> {
+    private static final int ITEM = 0;
+    private static final int LOADING = 1;
+    TextView reviewAuthor;
+    TextView reviewContent;
     private List<Review> reviews;
     private Context context;
     private boolean isLoading = false;
-    TextView reviewAuthor ;
-    TextView reviewContent;
 
 
-    private static final int ITEM = 0;
-    private static final int LOADING = 1;
-
-
-
-    public ReviewsListAdapter(Context context, List<Review> reviews ) {
+    public ReviewsListAdapter(Context context, List<Review> reviews) {
         this.reviews = reviews;
         this.context = context;
 
@@ -44,8 +42,22 @@ public class ReviewsListAdapter extends RecyclerView.Adapter<ReviewsListAdapter.
         holder.bind(reviews.get(position));
     }
 
+    @Override
+    public int getItemCount() {
+        return reviews == null ? 0 : reviews.size();
+    }
 
-    class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    @Override
+    public int getItemViewType(int position) {
+        return (position == reviews.size() - 1 && isLoading) ? LOADING : ITEM;
+    }
+
+    public void appendReview(List<Review> reviewToAppend) {
+        reviews.addAll(reviewToAppend);
+        notifyDataSetChanged();
+    }
+
+    class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
         public ReviewViewHolder(View itemView) {
@@ -56,30 +68,18 @@ public class ReviewsListAdapter extends RecyclerView.Adapter<ReviewsListAdapter.
 
             itemView.setOnClickListener(this);
         }
+
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             Review review = reviews.get(adapterPosition);
         }
+
         public void bind(Review review) {
             reviewAuthor.setText(review.getAuthor());
             reviewContent.setText(review.getContent());
 
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return reviews == null ? 0 : reviews.size();
-    }
-    @Override
-    public int getItemViewType(int position) {
-        return (position == reviews.size() - 1 && isLoading) ? LOADING : ITEM;
-    }
-
-    public void appendReview(List<Review> reviewToAppend) {
-        reviews.addAll(reviewToAppend);
-        notifyDataSetChanged();
     }
 
 }
