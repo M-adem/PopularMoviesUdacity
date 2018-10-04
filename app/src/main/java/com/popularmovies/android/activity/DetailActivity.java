@@ -1,10 +1,10 @@
 package com.popularmovies.android.activity;
 
 import android.app.Activity;
-import android.content.ContentValues;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +19,8 @@ import android.widget.Toast;
 import com.popularmovies.android.R;
 import com.popularmovies.android.adapter.ReviewsListAdapter;
 import com.popularmovies.android.adapter.TrailerListAdapter;
-import com.popularmovies.android.data.MovieContract;
+import com.popularmovies.android.data.MovieListViewModel;
+import com.popularmovies.android.data.MovieModel;
 import com.popularmovies.android.model.DetailMovie;
 import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
@@ -52,12 +53,14 @@ public class DetailActivity extends AppCompatActivity {
     private boolean isLoadingReview;
     private int currentPage = 1;
     private boolean isFavorite = false;
+    private MovieListViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         moviesRepository = MoviesRepository.getInstance();
+        viewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
         setUpUI(this);
 
 
@@ -182,39 +185,7 @@ public class DetailActivity extends AppCompatActivity {
         movieDetailRating = (TextView) findViewById(R.id.movie_detail_rating);
         movieDetailRuntime = (TextView) findViewById(R.id.movie_detail_runtime);
         movieMakeAsFavorite = (TextView) findViewById(R.id.movie_make_as_favorite);
-        movieMakeAsFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                if (!isFavorite) {
-
-                    movieMakeAsFavorite.setText(R.string.unfavorite);
-                    // insert
-                    ContentValues movieValues = new ContentValues();
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RATING, movie.getRating());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
-
-                    context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
-
-                    isFavorite = true;
-                } else {
-                    movieMakeAsFavorite.setText(R.string.action_favorite);
-                    isFavorite = false;
-
-                    String[] projection = new String[]{
-                            String.valueOf(movie.getId())
-                    };
-                    context.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?", projection);
-
-                }
-
-            }
-        });
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.getParcelableExtra("Movie") != null) {
@@ -231,21 +202,69 @@ public class DetailActivity extends AppCompatActivity {
                 //reviews
                 getReviewsMovies(movie.getId(), 1, this);
                 // test if favorite
-                String[] projection = new String[]{
-                        MovieContract.MovieEntry.COLUMN_MOVIE_ID
-                };
-                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = " + movie.getId();
 
-                Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, selection, null, null);
+                new AsyncTask<String, String, String>() {
+                    @Override
+                    protected String doInBackground(String... voids) {
+                        isFavorite = viewModel.isFavorite(movie.getId());
 
-                if ((cursor != null) && (cursor.moveToFirst())) {
-                    isFavorite = true;
-                    movieMakeAsFavorite.setText(R.string.unfavorite);
-                    cursor.close();
-                } else {
-                    movieMakeAsFavorite.setText(R.string.action_favorite);
-                    isFavorite = false;
-                }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(String result) {
+                        if (isFavorite) {
+                            movieMakeAsFavorite.setText(R.string.unfavorite);
+                        } else {
+                            movieMakeAsFavorite.setText(R.string.action_favorite);
+
+                        }
+                        movieMakeAsFavorite.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (!isFavorite) {
+                                    final MovieModel movieModel = new MovieModel(movie.getId(), movie.getTitle(), movie.getPosterPath(), movie.getReleaseDate(), movie.getRating(), movie.getOverview(), movie.getRuntime());
+
+                                    new AsyncTask<String, String, String>() {
+                                        @Override
+                                        protected String doInBackground(String... voids) {
+                                            viewModel.insertMovieFavorite(movieModel);
+                                            return null;
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(String result) {
+                                            isFavorite = true;
+                                            movieMakeAsFavorite.setText(R.string.unfavorite);
+                                        }
+                                    }.execute();
+
+                                } else {
+                                    // delete from favorite
+                                    new AsyncTask<String, String, String>() {
+                                        @Override
+                                        protected String doInBackground(String... voids) {
+                                            viewModel.deleteMovieByID(movie.getId());
+
+                                            return null;
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(String result) {
+                                            movieMakeAsFavorite.setText(R.string.action_favorite);
+                                            isFavorite = false;
+                                        }
+                                    }.execute();
+
+                                }
+
+                            }
+                        });
+                    }
+                }.execute();
+
+
             }
         }
     }

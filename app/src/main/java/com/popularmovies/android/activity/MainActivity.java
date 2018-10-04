@@ -1,11 +1,14 @@
 package com.popularmovies.android.activity;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,17 +21,21 @@ import android.widget.TextView;
 
 import com.popularmovies.android.R;
 import com.popularmovies.android.adapter.MoviesAdapter;
-import com.popularmovies.android.data.MovieContract;
+import com.popularmovies.android.adapter.MoviesFavoriteAdapter;
+import com.popularmovies.android.data.MovieListViewModel;
+import com.popularmovies.android.data.MovieModel;
 import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.repository.MoviesRepository;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
-    ProgressBar progressBar;
-    private RecyclerView moviesList;
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler, MoviesFavoriteAdapter.MoviesAdapterOnClickHandler {
+    MoviesFavoriteAdapter adapterFavorite;
+    private ProgressBar progressBar;
+    private CustomRecyclerView moviesList;
     private MoviesAdapter adapter;
     private TextView emptyView;
     private boolean isLoadingMovies;
@@ -37,65 +44,101 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private boolean topRatedMovies = false;
     private boolean favoriteMovies = false;
     private MoviesRepository moviesRepository;
+    private MovieListViewModel viewModel;
+    private Snackbar snackbar;
+    private GridLayoutManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
 
         moviesRepository = MoviesRepository.getInstance();
 
-        moviesList = findViewById(R.id.movies_list);
-
+        moviesList = findViewById(R.id.movies_list_rustomrecyclerriew);
+        moviesList.setHasFixedSize(true);
+        manager = new GridLayoutManager(this, 2);
+        moviesList.setLayoutManager(manager);
 
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
-        onScrollListenerPage();
-        getPopularMovies(currentPage);
-
-
-    }
-
-    public List<Movie> getAllFavorite() {
-        List<Movie> movieList = new ArrayList<>();
-
-        Cursor cursor = this.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, MovieContract.MovieEntry.COLUMN_MOVIE_ID);
-
-        if ((cursor != null) && (cursor.moveToFirst())) {
-            emptyView = (TextView) findViewById(R.id.empty_view);
-            emptyView.setText("");
+        if (savedInstanceState != null) {
+            currentPage = savedInstanceState.getInt("currentPage");
+            popularMovies = savedInstanceState.getBoolean("popularMovies");
+            favoriteMovies = savedInstanceState.getBoolean("favoriteMovies");
+            topRatedMovies = savedInstanceState.getBoolean("topRatedMovies");
+            System.out.println(currentPage + "    " + popularMovies + "    " + favoriteMovies + "   " + topRatedMovies);
             moviesList.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-            do {
-                Movie movie = new Movie();
-                movie.setId(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)));
-                movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)));
-                movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW)));
-                movie.setPosterPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)));
-                movie.setRating(cursor.getFloat(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING)));
-                movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
-                movie.setRuntime(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RUNTIME)));
+            isLoadingMovies = false;
+            progressBar.setVisibility(View.GONE);
+            if (favoriteMovies) {
+                adapterFavorite = new MoviesFavoriteAdapter(this, (ArrayList<MovieModel>) savedInstanceState.getSerializable("movieList"), this);
+                moviesList.setAdapter(adapterFavorite);
+            } else {
+                adapter = new MoviesAdapter(this, (ArrayList<Movie>) savedInstanceState.getSerializable("movieList"), this);
+                moviesList.setAdapter(adapter);
+            }
 
-                movieList.add(movie);
-            } while (cursor.moveToNext());
         } else {
-            emptyView = (TextView) findViewById(R.id.empty_view);
-            emptyView.setText(R.string.no_favorite_available);
-            moviesList.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
+            getPopularMovies(currentPage);
 
         }
+        onScrollListenerPage();
 
-        return movieList;
+        snackbar = Snackbar
+                .make(findViewById(R.id.swipe_layout), R.string.no_internet, Snackbar.LENGTH_LONG)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //RETRY
+                    }
+                });
+
+
+        snackbar.setActionTextColor(Color.RED);
+
+
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+
+
     }
 
-    public void getFavoriteMovies() {
-        //progressBar.setVisibility(View.VISIBLE);
-        isLoadingMovies = true;
 
-        //progressBar.setVisibility(View.GONE);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("currentPage", currentPage);
+        outState.putBoolean("popularMovies", popularMovies);
+        outState.putBoolean("favoriteMovies", favoriteMovies);
+        outState.putBoolean("topRatedMovies", topRatedMovies);
+        if (favoriteMovies) {
+            List<MovieModel> movieModels = adapterFavorite.getData();
+            outState.putSerializable("movieList", (Serializable) movieModels);
+        } else {
+            List<Movie> movies = adapter.getData();
+            outState.putSerializable("movieList", (Serializable) movies);
+        }
+    }
+
+
+    public void getFavoriteMovies() {
+        isLoadingMovies = true;
+        progressBar.setVisibility(View.VISIBLE);
         if (adapter == null) {
-            adapter = new MoviesAdapter(MainActivity.this, getAllFavorite(), MainActivity.this);
-            moviesList.setAdapter(adapter);
+            viewModel.getItemModel().observe(this, new Observer<List<MovieModel>>() {
+                @Override
+                public void onChanged(@Nullable final List<MovieModel> movieModels) {
+                    adapterFavorite = new MoviesFavoriteAdapter(MainActivity.this, null, MainActivity.this);
+                    adapterFavorite.setData(movieModels);
+                    moviesList.setAdapter(adapterFavorite);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
+
+
         }
 
         isLoadingMovies = false;
@@ -113,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 emptyView.setText("");
                 moviesList.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
-
                 if (adapter == null) {
                     adapter = new MoviesAdapter(MainActivity.this, (List<Movie>) params[1], MainActivity.this);
                     moviesList.setAdapter(adapter);
@@ -128,11 +170,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             @Override
             public void onError() {
                 progressBar.setVisibility(View.GONE);
-
                 emptyView = (TextView) findViewById(R.id.empty_view);
                 emptyView.setText(R.string.no_internet);
                 moviesList.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
+
+                snackbar.show();
 
             }
         });
@@ -168,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 emptyView.setText(R.string.no_internet);
                 moviesList.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
+                snackbar.show();
+
             }
         });
 
@@ -220,9 +265,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
 
     private void onScrollListenerPage() {
-        moviesList.setHasFixedSize(true);
-        final GridLayoutManager manager = new GridLayoutManager(this, 2);
-        moviesList.setLayoutManager(manager);
+
         moviesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -245,30 +288,22 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        adapter = null;
-        currentPage = 1;
-        if (favoriteMovies) {
-            getFavoriteMovies();
-        }
-        if (topRatedMovies) {
-            getTopRatedMovies(currentPage);
-        }
-        if (popularMovies) {
-            getPopularMovies(currentPage);
-        }
+    public void onClick(MovieModel movieModel) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        Movie movie = new Movie();
+        movie.setId(movieModel.getMovieId());
+        movie.setOverview(movieModel.getOverview());
+        movie.setPosterPath(movieModel.getPosterPath());
+        movie.setRating(movieModel.getRating());
+        movie.setReleaseDate(movieModel.getReleaseDate());
+        movie.setRuntime(movieModel.getRuntime());
+        movie.setTitle(movieModel.getTitle());
+        intentToStartDetailActivity.putExtra("Movie", movie);
+
+        startActivity(intentToStartDetailActivity);
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
 
-        /*
-        if ( getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if ( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(MainActivity.this, "portrait", Toast.LENGTH_SHORT).show();
-        }*/
-    }
 }

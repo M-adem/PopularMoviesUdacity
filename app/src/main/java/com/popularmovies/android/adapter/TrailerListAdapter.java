@@ -1,5 +1,6 @@
 package com.popularmovies.android.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ public class TrailerListAdapter extends ArrayAdapter<Trailer> {
 
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.listview_trailer_item, null, true);
+        @SuppressLint("InflateParams") View rowView = inflater.inflate(R.layout.listview_trailer_item, null, true);
 
         TextView trailerName = (TextView) rowView.findViewById(R.id.trailer_name);
 

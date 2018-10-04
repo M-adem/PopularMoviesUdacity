@@ -23,7 +23,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private Context context;
     private boolean isLoading = false;
 
-
     public MoviesAdapter(MoviesAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
@@ -34,6 +33,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         this.context = context;
         this.mClickHandler = mClickHandler;
     }
+
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -62,8 +62,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         notifyDataSetChanged();
     }
 
+    public List<Movie> getData() {
+        return this.movies;
+    }
+
     public interface MoviesAdapterOnClickHandler {
+
+
         void onClick(Movie movie);
+
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -88,5 +95,4 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             Picasso.with(context).load(Constant.BASE_URL_IMG + movie.getPosterPath()).placeholder(R.drawable.movie_placeholder).error(R.drawable.erreur_images).into(imageUrl);
         }
     }
-
 }
