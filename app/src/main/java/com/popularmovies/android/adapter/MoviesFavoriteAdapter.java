@@ -44,7 +44,7 @@ public class MoviesFavoriteAdapter extends RecyclerView.Adapter<MoviesFavoriteAd
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        holder.bind(movieModels.get(position));
+        holder.bind(movieModels.get(holder.getAdapterPosition()));
     }
 
     @Override

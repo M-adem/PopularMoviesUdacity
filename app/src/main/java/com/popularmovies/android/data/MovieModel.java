@@ -4,10 +4,12 @@ package com.popularmovies.android.data;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 
 @Entity
-public class MovieModel {
+public class MovieModel implements Parcelable {
 
 
     @PrimaryKey(autoGenerate = true)
@@ -28,8 +30,21 @@ public class MovieModel {
     private int runtime;
 
 
+    public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
+        @Override
+        public MovieModel createFromParcel(Parcel in) {
+            return new MovieModel(in);
+        }
+
+        @Override
+        public MovieModel[] newArray(int size) {
+            return new MovieModel[size];
+        }
+    };
+
+
     public MovieModel(int movieId, String title, String posterPath, String releaseDate, float rating, String overview, int runtime) {
-        this.id = id;
+
         this.movieId = movieId;
         this.title = title;
         this.posterPath = posterPath;
@@ -39,6 +54,16 @@ public class MovieModel {
         this.runtime = runtime;
     }
 
+    protected MovieModel(Parcel in) {
+        id = in.readInt();
+        movieId = in.readInt();
+        title = in.readString();
+        posterPath = in.readString();
+        releaseDate = in.readString();
+        rating = in.readFloat();
+        overview = in.readString();
+        runtime = in.readInt();
+    }
 
     public int getId() {
         return id;
@@ -104,5 +129,20 @@ public class MovieModel {
         this.movieId = movieId;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(movieId);
+        dest.writeString(title);
+        dest.writeString(posterPath);
+        dest.writeString(releaseDate);
+        dest.writeFloat(rating);
+        dest.writeString(overview);
+        dest.writeInt(runtime);
+    }
 }

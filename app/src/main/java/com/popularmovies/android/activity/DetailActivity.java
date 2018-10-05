@@ -6,15 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.popularmovies.android.R;
 import com.popularmovies.android.adapter.ReviewsListAdapter;
@@ -33,39 +36,79 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.popularmovies.android.utils.Constant.CURRENT_PAGE;
+
 public class DetailActivity extends AppCompatActivity {
 
     private MoviesRepository moviesRepository;
-    private TextView moviDetailTitle;
-    private ImageView movieDetailImage;
-    private TextView movieDetailDate;
-    private TextView movieDetailOverview;
-    private TextView movieDetailRating;
-    private TextView movieDetailRuntime;
-    private TextView movieMakeAsFavorite;
+    @BindView(R.id.movie_detail_title)
+    public TextView moviDetailTitle;
+    @BindView(R.id.movie_detail_image)
+    public ImageView movieDetailImage;
+    @BindView(R.id.movie_detail_date)
+    public TextView movieDetailDate;
+    @BindView(R.id.movie_detail_overview)
+    public TextView movieDetailOverview;
+    @BindView(R.id.movie_detail_rating)
+    public TextView movieDetailRating;
+    @BindView(R.id.movie_detail_runtime)
+    public TextView movieDetailRuntime;
     private Movie movie;
     private List<Trailer> trailers;
     private TrailerListAdapter trailerListAdapter;
     private List<Review> reviews;
     private ReviewsListAdapter reviewsListAdapter;
-    private ListView listViewTrailer;
-    private RecyclerView listViewReview;
+    @BindView(R.id.trailer_list)
+    public ListView listViewTrailer;
+    @BindView(R.id.review_list)
+    public RecyclerView listViewReview;
     private boolean isLoadingReview;
     private int currentPage = 1;
     private boolean isFavorite = false;
     private MovieListViewModel viewModel;
+    @BindView(R.id.movie_make_as_favorite)
+    public ToggleButton toggleButton;
+    @BindView(R.id.review_header)
+    public TextView reviewText;
+    @BindView(R.id.trailers_header)
+    public TextView trailerText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        ButterKnife.bind(this);
+
         moviesRepository = MoviesRepository.getInstance();
         viewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
         setUpUI(this);
 
 
+        toggleButton.setChecked(false);
+        toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.unfavorite));
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                    toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.unfavorite));
+                else
+                    toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.make_favorite));
+            }
+        });
+
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(CURRENT_PAGE, currentPage);
+    }
 
     public void getReviewsMovies(final int id, final int page, final Activity context) {
         isLoadingReview = true;
@@ -78,7 +121,6 @@ public class DetailActivity extends AppCompatActivity {
                     if (reviewsListAdapter == null) {
                         reviewsListAdapter = new ReviewsListAdapter(context, reviews);
 
-                        listViewReview = (RecyclerView) findViewById(R.id.review_list);
                         listViewReview.setAdapter(reviewsListAdapter);
                         //MovieUtile.setListViewHeightBasedOnItems(listViewReview);
                         onScrollListenerPage(id, context);
@@ -88,7 +130,7 @@ public class DetailActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    TextView reviewText = (TextView) findViewById(R.id.review_header);
+
                     reviewText.setVisibility(View.GONE);
                     reviewText.setVisibility(View.INVISIBLE);
                     if (listViewReview != null) {
@@ -142,7 +184,6 @@ public class DetailActivity extends AppCompatActivity {
 
                     trailerListAdapter = new TrailerListAdapter(context, trailers);
 
-                    listViewTrailer = (ListView) findViewById(R.id.trailer_list);
                     listViewTrailer.setAdapter(trailerListAdapter);
                     MovieUtile.setListViewHeightBasedOnItems(listViewTrailer);
 
@@ -156,7 +197,6 @@ public class DetailActivity extends AppCompatActivity {
                     });
 
                 } else {
-                    TextView trailerText = (TextView) findViewById(R.id.trailers_header);
                     trailerText.setVisibility(View.GONE);
                     trailerText.setVisibility(View.INVISIBLE);
                     if (listViewTrailer != null) {
@@ -178,13 +218,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void setUpUI(final Context context) {
-        moviDetailTitle = (TextView) findViewById(R.id.movie_detail_title);
-        movieDetailImage = (ImageView) findViewById(R.id.movie_detail_image);
-        movieDetailDate = (TextView) findViewById(R.id.movie_detail_date);
-        movieDetailOverview = (TextView) findViewById(R.id.movie_detail_overview);
-        movieDetailRating = (TextView) findViewById(R.id.movie_detail_rating);
-        movieDetailRuntime = (TextView) findViewById(R.id.movie_detail_runtime);
-        movieMakeAsFavorite = (TextView) findViewById(R.id.movie_make_as_favorite);
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
@@ -201,7 +234,7 @@ public class DetailActivity extends AppCompatActivity {
                 getTrailerMovies(movie.getId(), this);
                 //reviews
                 getReviewsMovies(movie.getId(), 1, this);
-                // test if favorite
+                // test if make_favorite
 
                 new AsyncTask<String, String, String>() {
                     @Override
@@ -214,12 +247,19 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     protected void onPostExecute(String result) {
                         if (isFavorite) {
-                            movieMakeAsFavorite.setText(R.string.unfavorite);
+                            //movieMakeAsFavorite.setText(R.string.unfavorite);
+                            toggleButton.setChecked(true);
+                            toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.unfavorite));
+
                         } else {
-                            movieMakeAsFavorite.setText(R.string.action_favorite);
+                            //movieMakeAsFavorite.setText(R.string.action_favorite);
+                            toggleButton.setChecked(false);
+
+                            toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.make_favorite));
+
 
                         }
-                        movieMakeAsFavorite.setOnClickListener(new View.OnClickListener() {
+                        toggleButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
 
@@ -236,12 +276,16 @@ public class DetailActivity extends AppCompatActivity {
                                         @Override
                                         protected void onPostExecute(String result) {
                                             isFavorite = true;
-                                            movieMakeAsFavorite.setText(R.string.unfavorite);
+                                            //movieMakeAsFavorite.setText(R.string.unfavorite);
+                                            toggleButton.setChecked(true);
+
+                                            toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.unfavorite));
+
                                         }
                                     }.execute();
 
                                 } else {
-                                    // delete from favorite
+                                    // delete from make_favorite
                                     new AsyncTask<String, String, String>() {
                                         @Override
                                         protected String doInBackground(String... voids) {
@@ -252,8 +296,12 @@ public class DetailActivity extends AppCompatActivity {
 
                                         @Override
                                         protected void onPostExecute(String result) {
-                                            movieMakeAsFavorite.setText(R.string.action_favorite);
+                                            // movieMakeAsFavorite.setText(R.string.action_favorite);
+                                            toggleButton.setChecked(false);
                                             isFavorite = false;
+
+                                            toggleButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.make_favorite));
+
                                         }
                                     }.execute();
 

@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.popularmovies.android.activity.DetailActivity">
 
     <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -73,22 +74,19 @@
             tools:text="5/10" />
 
 
-        <TextView
+        <ToggleButton
             android:id="@+id/movie_make_as_favorite"
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="100dp"
             android:layout_below="@id/movie_detail_rating"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_toRightOf="@id/movie_detail_image"
-            android:background="#00B6A0"
             android:padding="5dp"
-            android:text="@string/action_favorite"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
+            android:textOff=""
+            android:textOn="" />
         <TextView
             android:id="@+id/movie_detail_overview"
             android:layout_width="match_parent"

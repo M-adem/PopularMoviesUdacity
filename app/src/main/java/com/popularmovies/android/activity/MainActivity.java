@@ -27,10 +27,17 @@ import com.popularmovies.android.data.MovieModel;
 import com.popularmovies.android.model.GetMoviesCallback;
 import com.popularmovies.android.model.Movie;
 import com.popularmovies.android.repository.MoviesRepository;
+import com.popularmovies.android.utils.MovieUtile;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.popularmovies.android.utils.Constant.CURRENT_PAGE;
+import static com.popularmovies.android.utils.Constant.FAVORITE_MOVIES;
+import static com.popularmovies.android.utils.Constant.MOVIE_LIST;
+import static com.popularmovies.android.utils.Constant.POPULARE_MOVIES;
+import static com.popularmovies.android.utils.Constant.TOP_RATE_MOVIES;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler, MoviesFavoriteAdapter.MoviesAdapterOnClickHandler {
     MoviesFavoriteAdapter adapterFavorite;
@@ -58,24 +65,23 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         moviesList = findViewById(R.id.movies_list_rustomrecyclerriew);
         moviesList.setHasFixedSize(true);
-        manager = new GridLayoutManager(this, 2);
+        manager = new GridLayoutManager(this, MovieUtile.calculateNoOfColumns(getApplicationContext()));
         moviesList.setLayoutManager(manager);
 
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
         if (savedInstanceState != null) {
-            currentPage = savedInstanceState.getInt("currentPage");
-            popularMovies = savedInstanceState.getBoolean("popularMovies");
-            favoriteMovies = savedInstanceState.getBoolean("favoriteMovies");
-            topRatedMovies = savedInstanceState.getBoolean("topRatedMovies");
-            System.out.println(currentPage + "    " + popularMovies + "    " + favoriteMovies + "   " + topRatedMovies);
+            currentPage = savedInstanceState.getInt(CURRENT_PAGE);
+            popularMovies = savedInstanceState.getBoolean(POPULARE_MOVIES);
+            favoriteMovies = savedInstanceState.getBoolean(FAVORITE_MOVIES);
+            topRatedMovies = savedInstanceState.getBoolean(TOP_RATE_MOVIES);
             moviesList.setVisibility(View.VISIBLE);
             isLoadingMovies = false;
             progressBar.setVisibility(View.GONE);
             if (favoriteMovies) {
-                adapterFavorite = new MoviesFavoriteAdapter(this, (ArrayList<MovieModel>) savedInstanceState.getSerializable("movieList"), this);
+                adapterFavorite = new MoviesFavoriteAdapter(this, (ArrayList<MovieModel>) savedInstanceState.getSerializable(MOVIE_LIST), this);
                 moviesList.setAdapter(adapterFavorite);
             } else {
-                adapter = new MoviesAdapter(this, (ArrayList<Movie>) savedInstanceState.getSerializable("movieList"), this);
+                adapter = new MoviesAdapter(this, (ArrayList<Movie>) savedInstanceState.getSerializable(MOVIE_LIST), this);
                 moviesList.setAdapter(adapter);
             }
 
@@ -110,16 +116,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt("currentPage", currentPage);
-        outState.putBoolean("popularMovies", popularMovies);
-        outState.putBoolean("favoriteMovies", favoriteMovies);
-        outState.putBoolean("topRatedMovies", topRatedMovies);
+        outState.putInt(CURRENT_PAGE, currentPage);
+        outState.putBoolean(POPULARE_MOVIES, popularMovies);
+        outState.putBoolean(FAVORITE_MOVIES, favoriteMovies);
+        outState.putBoolean(TOP_RATE_MOVIES, topRatedMovies);
         if (favoriteMovies) {
             List<MovieModel> movieModels = adapterFavorite.getData();
-            outState.putSerializable("movieList", (Serializable) movieModels);
+            outState.putSerializable(MOVIE_LIST, (Serializable) movieModels);
         } else {
             List<Movie> movies = adapter.getData();
-            outState.putSerializable("movieList", (Serializable) movies);
+            outState.putSerializable(MOVIE_LIST, (Serializable) movies);
         }
     }
 
@@ -133,8 +139,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 public void onChanged(@Nullable final List<MovieModel> movieModels) {
                     adapterFavorite = new MoviesFavoriteAdapter(MainActivity.this, null, MainActivity.this);
                     adapterFavorite.setData(movieModels);
-                    moviesList.setAdapter(adapterFavorite);
-                    progressBar.setVisibility(View.GONE);
+                    if (favoriteMovies) {
+                        moviesList.setAdapter(adapterFavorite);
+                        progressBar.setVisibility(View.GONE);
+                    }
+
                 }
             });
 
@@ -228,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(MenuItem item) {
         currentPage = 1;
         adapter = null;
+        adapterFavorite = null;
         switch (item.getItemId()) {
             case R.id.sort_by_popularity:
                 popularMovies = true;
