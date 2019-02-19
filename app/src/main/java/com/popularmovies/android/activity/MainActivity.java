@@ -39,8 +39,9 @@ import static com.popularmovies.android.utils.Constant.MOVIE_LIST;
 import static com.popularmovies.android.utils.Constant.POPULARE_MOVIES;
 import static com.popularmovies.android.utils.Constant.TOP_RATE_MOVIES;
 
+
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler, MoviesFavoriteAdapter.MoviesAdapterOnClickHandler {
-    MoviesFavoriteAdapter adapterFavorite;
+    private MoviesFavoriteAdapter adapterFavorite;
     private ProgressBar progressBar;
     private CustomRecyclerView moviesList;
     private MoviesAdapter adapter;
