@@ -14,7 +14,10 @@ This app uses www.themoviedb.org as source of it's content, you need to get an A
 
 3. Read reviews
 
-
+![github-small](https://user-images.githubusercontent.com/37751314/55350293-04a4ba00-54bc-11e9-8c2c-dc58b39fda87.png)
+![github-small](https://user-images.githubusercontent.com/37751314/55350364-3cabfd00-54bc-11e9-9aa5-e41599794650.png)
+![github-small](https://user-images.githubusercontent.com/37751314/55350366-3cabfd00-54bc-11e9-8531-124c79b730c1.png)
+![github-small](https://user-images.githubusercontent.com/37751314/55350367-3cabfd00-54bc-11e9-8422-5c5f68e480f4.png)
 # License
 **Copyright 2018 Adem Meriem**
 
